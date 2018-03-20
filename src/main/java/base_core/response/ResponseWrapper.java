@@ -45,6 +45,10 @@ public class ResponseWrapper {
         this.message = message;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public <T> ResponseWrapper addObject(String key, T value) {
         if (key != null) {
             data.put(key, data);
