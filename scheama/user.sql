@@ -20,7 +20,7 @@ create table user(
   key idx_username(username)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;
 
-create table user_pwd(
+create table user_password(
   user_id bigint unsigned not null,
   password varchar(128) not null,
   create_time datetime not null,

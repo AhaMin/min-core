@@ -8,8 +8,10 @@ import java.util.Map;
  * created by ewang on 2018/3/19.
  */
 public enum ResponseStatus {
-    Ok(200)
-    ;
+    Ok(200),
+    UserIllegal(451), //
+    NotFound(404), //
+    ServerError(500);
 
     private final int value;
 

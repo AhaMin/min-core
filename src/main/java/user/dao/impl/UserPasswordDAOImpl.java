@@ -4,21 +4,20 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import user.dao.UserDao;
-import user.model.User;
+import user.dao.UserPasswordDAO;
+import user.model.UserPassword;
 
 import javax.annotation.PostConstruct;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  * created by ewang on 2018/3/20.
  */
 @Repository
-public class UserDaoImpl implements UserDao, RowMapper<User> {
-
+public class UserPasswordDAOImpl implements UserPasswordDAO, RowMapper<UserPassword> {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @PostConstruct
@@ -32,16 +31,17 @@ public class UserDaoImpl implements UserDao, RowMapper<User> {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new User(rs.getLong("id"),
-                rs.getString("account"),
-                rs.getString("username"),
-                rs.getString("data"),
-                new Date(rs.getTimestamp("create_time").getTime()));
+    @Override
+    public UserPassword mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new UserPassword(rs.getLong("user_id"),
+                rs.getString("password"),
+                new Date(rs.getTimestamp("create_time").getTime()),
+                rs.getLong("update_time"));
     }
 
-    public User getById(long id) {
-        String sql = "select * from user where id = :id";
-        return jdbcTemplate.queryForObject(sql, Collections.singletonMap("id", id), this);
+    @Override
+    public UserPassword getByUser(long userId) {
+        String sql = "select * from user_password where user_id = :userId";
+        return jdbcTemplate.queryForObject(sql, Collections.singletonMap("userId", userId), this);
     }
 }
