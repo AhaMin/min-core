@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import base_core.user.model.User;
 
@@ -46,13 +47,13 @@ public class UserDAOImpl implements UserDAO, RowMapper<User> {
         return jdbcTemplate.queryForObject(sql, Collections.singletonMap("id", id), this);
     }
 
-    @Override
+
     public User getByAccount(String account) {
         String sql = "select * from user where account = account";
         return jdbcTemplate.queryForObject(sql, Collections.singletonMap("account", account), this);
     }
 
-    @Override
+
     public long insert(String account, String data) {
         String sql = "insert into user(account, data, create_time) values(:account, :data, now())";
         MapSqlParameterSource params = new MapSqlParameterSource();
