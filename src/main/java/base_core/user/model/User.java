@@ -1,4 +1,4 @@
-package user.model;
+package base_core.user.model;
 
 import java.util.Date;
 

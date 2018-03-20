@@ -1,4 +1,4 @@
-package response;
+package base_core.response;
 
 import java.util.Collections;
 import java.util.HashMap;

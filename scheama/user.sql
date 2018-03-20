@@ -12,7 +12,6 @@ USE `user`;
 create table user(
   id bigint unsigned not null auto_increment,
   account varchar(64) not null,
-  username varchar(128) not null,
   data json not null,
   create_time datetime not null,
   primary key (id),

@@ -1,11 +1,13 @@
-package user.dao.impl;
+package base_core.user.dao.impl;
 
+import base_core.user.dao.UserDAO;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-import user.dao.UserDAO;
-import user.model.User;
+import base_core.user.model.User;
 
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
@@ -48,5 +50,16 @@ public class UserDAOImpl implements UserDAO, RowMapper<User> {
     public User getByAccount(String account) {
         String sql = "select * from user where account = account";
         return jdbcTemplate.queryForObject(sql, Collections.singletonMap("account", account), this);
+    }
+
+    @Override
+    public long insert(String account, String data) {
+        String sql = "insert into user(account, data, create_time) values(:account, :data, now())";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("account", account)
+                .addValue("data", data);
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(sql, params, keyHolder);
+        return keyHolder.getKey().longValue();
     }
 }
