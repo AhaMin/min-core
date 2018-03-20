@@ -13,12 +13,19 @@ create table user(
   id bigint unsigned not null auto_increment,
   account varchar(64) not null,
   username varchar(128) not null,
-  password varchar(128) not null,
   data json not null,
   create_time datetime not null,
   primary key (id),
   key idx_account(account),
   key idx_username(username)
+)Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;
+
+create table user_pwd(
+  user_id bigint unsigned not null,
+  password varchar(128) not null,
+  create_time datetime not null,
+  update_time bigint unsigned not null,
+  key idx_user(user_id)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;
 
 -- 用户地址address
