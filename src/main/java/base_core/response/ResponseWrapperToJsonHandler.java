@@ -39,13 +39,14 @@ public class ResponseWrapperToJsonHandler implements HandlerMethodReturnValueHan
 
     }
 
-    public static void outputJson(HttpServletResponse response, String json) {
+    public static void outputJson(HttpServletResponse response, String json) throws IOException {
         response.setContentType("application/json; charset=utf-8");
         try {
             PrintWriter out = response.getWriter();
             out.print(json);
             out.flush();
         } catch (IOException e) {
+            throw new IOException("out put json fail");
         }
     }
 }
