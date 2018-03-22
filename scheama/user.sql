@@ -15,8 +15,7 @@ create table user(
   data json not null,
   create_time datetime not null,
   primary key (id),
-  key idx_account(account),
-  key idx_username(username)
+  key idx_account(account)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;
 
 create table user_password(
