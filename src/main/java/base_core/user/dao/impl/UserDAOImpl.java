@@ -2,6 +2,7 @@ package base_core.user.dao.impl;
 
 import base_core.user.dao.UserDAO;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -44,13 +45,21 @@ public class UserDAOImpl implements UserDAO, RowMapper<User> {
 
     public User getById(long id) {
         String sql = "select * from user where id = :id";
-        return jdbcTemplate.queryForObject(sql, Collections.singletonMap("id", id), this);
+        try {
+            return jdbcTemplate.queryForObject(sql, Collections.singletonMap("id", id), this);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
     }
 
 
     public User getByAccount(String account) {
         String sql = "select * from user where account = account";
-        return jdbcTemplate.queryForObject(sql, Collections.singletonMap("account", account), this);
+        try {
+            return jdbcTemplate.queryForObject(sql, Collections.singletonMap("account", account), this);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
     }
 
 

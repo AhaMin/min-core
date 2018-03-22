@@ -51,7 +51,7 @@ public class ResponseWrapper {
 
     public <T> ResponseWrapper addObject(String key, T value) {
         if (key != null) {
-            data.put(key, data);
+            data.put(key, value);
         }
         return this;
     }
