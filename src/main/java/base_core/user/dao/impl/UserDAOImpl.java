@@ -54,7 +54,7 @@ public class UserDAOImpl implements UserDAO, RowMapper<User> {
 
 
     public User getByAccount(String account) {
-        String sql = "select * from user where account = account";
+        String sql = "select * from user where account = :account";
         try {
             return jdbcTemplate.queryForObject(sql, Collections.singletonMap("account", account), this);
         } catch (IncorrectResultSizeDataAccessException e) {
