@@ -11,7 +11,9 @@ public enum ResponseStatus {
     Ok(200),
     UserIllegal(451), //
     NotFound(404), //
-    ServerError(500);
+    ServerError(500),
+    RequestParamValidationFail(501),
+    UploadFail(506); //
 
     private final int value;
 
