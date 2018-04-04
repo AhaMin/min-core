@@ -1,4 +1,4 @@
-package base_core.constants;
+package base_core.constants.model;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,8 +8,7 @@ import java.util.Map;
  * created by ewang on 2018/3/23.
  */
 public enum Constants {
-    ImagePath("/Users/ewang/Min-ImagePath/upload/")
-    ;
+    ImagePath("/Users/ewang/Min-ImagePath/upload/");
 
     private final String value;
 

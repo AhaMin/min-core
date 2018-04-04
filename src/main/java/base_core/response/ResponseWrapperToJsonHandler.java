@@ -36,6 +36,7 @@ public class ResponseWrapperToJsonHandler implements HandlerMethodReturnValueHan
         }
 
         outputJson((HttpServletResponse) webRequest.getNativeResponse(), JSONCodec.encode(wrapper));
+        mavContainer.setRequestHandled(true);
 
     }
 
