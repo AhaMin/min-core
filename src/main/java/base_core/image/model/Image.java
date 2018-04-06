@@ -18,6 +18,9 @@ public class Image extends AbstractDataAttributeEntity {
 
     public static final DataAttributeKey<Integer> KEY_HEIGHT = new DataAttributeKey<>(Image.class, "height", Integer.class);
 
+    //乐观锁compare and swap
+    public static final DataAttributeKey<Integer> KEY_VERSION = new DataAttributeKey<>(Image.class, "version", Integer.class);
+
     private final long id;
     private final String data;
     private final Date createTime;
@@ -42,6 +45,10 @@ public class Image extends AbstractDataAttributeEntity {
 
     public int getHeight() {
         return getDataAttr(KEY_HEIGHT).get();
+    }
+
+    public int getVersion() {
+        return getDataAttr(KEY_VERSION).get();
     }
 
     public long getId() {

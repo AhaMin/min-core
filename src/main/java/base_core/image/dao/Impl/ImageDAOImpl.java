@@ -56,13 +56,14 @@ public class ImageDAOImpl implements ImageDAO, RowMapper<Image> {
         return keyHolder.getKey().longValue();
     }
 
-    //TODO mysql新类型json不能解析{}
+    //加个字段version来控制cas
     @Override
-    public int update(long id, String newData) {
-        String sql = "update image set data = :newData where id = :id";
+    public int update(long id, String newData, int version) {
+        String sql = "update image set data = :newData where id = :id and json_extract(data,'$.version[0]') = :version";
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("newData", newData)
-                .addValue("id", id);
+                .addValue("id", id)
+                .addValue("version", version);
         return jdbcTemplate.update(sql, params);
     }
 

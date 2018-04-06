@@ -20,7 +20,7 @@ public class FileUploadHelper {
     private ImageDAO imageDAO;
 
     public Long upload(MultipartFile file) {
-        long id = imageDAO.insert("{}");
+        long id = imageDAO.insert(new DataAttributeBuilder().add(Image.KEY_VERSION, 1).buildString());
 
         FileOutputStream fos = null;
         boolean success = false;
@@ -45,10 +45,12 @@ public class FileUploadHelper {
             }
         }
         if (success) {
-            DataAttributeBuilder builder = new DataAttributeBuilder()
-                    .add(Image.KEY_PATH, filePath);
-            imageDAO.update(id, builder.buildString());
             Image finalImage = imageDAO.getById(id);
+            int version = finalImage.getVersion();
+            DataAttributeBuilder builder = new DataAttributeBuilder()
+                    .add(Image.KEY_PATH, filePath)
+                    .add(Image.KEY_VERSION, version + 1);
+            imageDAO.update(id, builder.buildString(), version);
             return finalImage.getId();
         } else {
             imageDAO.delete(id);

@@ -10,7 +10,7 @@ public interface ImageDAO {
 
     long insert(String data);
 
-    int update(long id, String newData);
+    int update(long id, String newData, int version);
 
     int delete(long id);
 }
