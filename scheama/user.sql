@@ -23,14 +23,12 @@ create table user_password(
   password varchar(128) not null,
   create_time datetime not null,
   update_time bigint unsigned not null,
-  key idx_user(user_id)
+  primary key idx_user(user_id)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;
 
 -- 用户地址address
-create table address(
-	id bigint unsigned not null auto_increment,
+create table user_address(
 	user_id bigint unsigned not null,
 	address varchar(4096) not null,
-	PRIMARY key (id),
-	KEY idx_user_id(user_id)
+	PRIMARY key (user_id)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;

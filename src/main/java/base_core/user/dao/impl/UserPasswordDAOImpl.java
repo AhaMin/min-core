@@ -50,7 +50,8 @@ public class UserPasswordDAOImpl implements UserPasswordDAO, RowMapper<UserPassw
     @Override
     public int insertOrUpdate(long userId, String password, long updateTimeMills) {
         String sql = "insert into user_password(user_id, password, create_time, update_time) " +
-                "values(:userId, :password, now(), :updateTime)";
+                "values(:userId, :password, now(), :updateTime)" +
+                "on duplicate key update password = :password, update_time = :updateTime";
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("password", password)
