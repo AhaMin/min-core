@@ -1,8 +1,9 @@
 package base_core.user.dao.impl;
 
+import base_core.constants.helper.DBHelper;
+import base_core.constants.model.DBKeys;
 import base_core.user.dao.UserPasswordDAO;
 import base_core.user.model.UserPassword;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,13 +25,7 @@ public class UserPasswordDAOImpl implements UserPasswordDAO, RowMapper<UserPassw
 
     @PostConstruct
     public void init() {
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/user");
-        dataSource.setUsername("root");
-        dataSource.setPassword("0530");
-
-        jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        jdbcTemplate = new NamedParameterJdbcTemplate(DBHelper.getDataSource(DBKeys.User));
     }
 
     @Override
