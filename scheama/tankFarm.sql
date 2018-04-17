@@ -404,7 +404,7 @@ ON total_sale.id=total_supply.id;
 在第9题的视图中查询，银卡会员2017年消费金额最高的客户名称。
  */
 
-
+-- 添加注释
 -- 1.用insert语句给每个表插入两条记录,注意符合完整性约束要求。
 insert into staff(work_id,name,id_num,staff_type,password,phone_num) values(233333,'李梅','210403196605172433','财务','123456','15843214321');
 insert into staff(work_id,name,id_num,staff_type,password,phone_num) values(666666,'马云','210403196605170038','经理','123456','15866668888');
