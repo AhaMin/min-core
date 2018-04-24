@@ -451,13 +451,15 @@ WHERE name='王苗';
 
 -- 5. 删除柴油的信息，如果删除时系统提示错误，请提出解决办法。
 ALTER TABLE tank_storage DROP FOREIGN KEY tank_storage_ibfk_1;
-ALTER TABLE tank_storage ADD CONSTRAINT fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE;
+ALTER TABLE tank_storage ADD CONSTRAINT ts_fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE supply_info DROP FOREIGN KEY supply_info_ibfk_1;
-ALTER TABLE supply_info ADD CONSTRAINT fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE;
+ALTER TABLE supply_info ADD CONSTRAINT supply_fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE sale_info DROP FOREIGN KEY sale_info_ibfk_1;
-ALTER TABLE sale_info ADD CONSTRAINT fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE;
+ALTER TABLE sale_info ADD CONSTRAINT sale_fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+DELETE FROM tank WHERE name='柴油';
 
 -- 6. 删除2018年3月10日，会员王苗给车加97号汽油的信息。
 DELETE FROM sale_info WHERE create_time='2018-3-10' AND
@@ -490,3 +492,50 @@ SELECT c.member_id,c.consumption FROM consumption_2017 c WHERE c.member_id IN
 SELECT name FROM member WHERE member.member_id=
 (SELECT member_id FROM consumption_2017_silver WHERE consumption=
 (SELECT MAX(consumption) FROM consumption_2017_silver));
+
+-- *****************************************************************************************************
+
+-- 1.先删除进货信息表中中定义的外码约束，再重新定义外码约束（给约束命名），违约处理采用级联操作。
+
+ALTER TABLE supply_info DROP FOREIGN KEY supply_info_ibfk_1;
+ALTER TABLE supply_info ADD CONSTRAINT supply_fk_tank FOREIGN KEY(tank_id) REFERENCES tank(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+
+ALTER TABLE supply_info DROP FOREIGN KEY supply_info_ibfk_2;
+ALTER TABLE supply_info ADD CONSTRAINT supply_fk_farm FOREIGN KEY(farm_id) REFERENCES farm_info(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+
+ALTER TABLE supply_info DROP FOREIGN KEY supply_info_ibfk_3;
+ALTER TABLE supply_info ADD CONSTRAINT supply_fk_staff FOREIGN KEY(operate_staff_id) REFERENCES staff(work_id) ON DELETE CASCADE ON UPDATE CASCADE ;
+
+
+-- 2.创建触发器，当在进货信息表中添加一条记录，对应修改油品储量信息表中的储量信息。
+delimiter $$
+CREATE trigger tri_after_supply_insert
+after INSERT ON supply_info FOR each row
+BEGIN
+UPDATE tank_storage SET storage_capacity=(storage_capacity+new.supply_capacity) WHERE tank_id=new.tank_id;
+END$$
+delimiter ;
+
+-- 3.创建触发器，当在销售信息添加一条记录，对应修改油品储量信息表中的储量信息。
+delimiter $$
+CREATE trigger tri_after_sale_insert
+after INSERT ON sale_info FOR each row
+BEGIN
+UPDATE tank_storage SET storage_capacity=(storage_capacity-new.sale_capacity) WHERE tank_id=new.tank_id;
+END$$
+delimiter ;
+
+-- 4.创建触发器，当在销售信息添加一条记录,对应修改会员信息表中的总消费额,修改会员信息中的总消费额后，如果总消费额超过10000，修改其为金卡会员。
+UPDATE member_level SET min_consumption=10000 WHERE name='金卡';
+
+delimiter $$
+CREATE trigger tri_after_sale_insert_2
+after INSERT ON sale_info FOR each row
+BEGIN
+UPDATE member SET total_consumption=(total_consumption+new.sale_capacity*new.unit_price*new.discount) WHERE member_id=new.member_id;
+if((SELECT total_consumption FROM member WHERE member_id=new.member_id)>10000)
+THEN
+UPDATE member SET level_id=(SELECT id FROM member_level WHERE name='金卡') WHERE member_id=new.member_id;
+END if;
+END$$
+delimiter ;
