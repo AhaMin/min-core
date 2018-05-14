@@ -9,8 +9,8 @@ import java.util.Map;
  */
 public enum DBKeys {
     User("127.0.0.1:3306/user"),
-    Image("127.0.0.1:3306/image")
-    ;
+    Image("127.0.0.1:3306/image"),
+    Session("127.0.0.1:3306/session");
 
     private final String value;
 
