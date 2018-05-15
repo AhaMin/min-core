@@ -67,4 +67,13 @@ public class UserDAOImpl implements UserDAO, RowMapper<User> {
         jdbcTemplate.update(sql, params, keyHolder);
         return keyHolder.getKey().longValue();
     }
+
+    @Override
+    public int updateData(long userId, String newData, String oldData) {
+        String sql = "update user set data = :newData where id = :userId and data = :oldData";
+        MapSqlParameterSource params = new MapSqlParameterSource("userId", userId)
+                .addValue("newData", newData)
+                .addValue("oldData", oldData);
+        return jdbcTemplate.update(sql, params);
+    }
 }

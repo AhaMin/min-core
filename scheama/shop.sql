@@ -8,7 +8,8 @@ SET GLOBAL innodb_file_format=Barracuda;
 
 USE `shop`;
 
-
+-- FIXME json数据类型转换成string
+-- TODO 商品部分数据库梳理搭建
 -- 商品表goods
 create table goods(
 	id bigint unsigned not null auto_increment,

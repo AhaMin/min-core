@@ -1,11 +1,18 @@
 package base_core.user.model;
 
+import com.google.common.reflect.TypeToken;
+import common.AbstractDataAttributeEntity;
+import common.DataAttributeKey;
+
 import java.util.Date;
 
 /**
  * created by ewang on 2018/3/20.
  */
-public class User {
+public class User extends AbstractDataAttributeEntity {
+
+    public static DataAttributeKey<String> KEY_USERNAME = new DataAttributeKey<String>(User.class,
+            "username", TypeToken.of(String.class));
 
     private final long id;
     private final String account;
@@ -33,6 +40,10 @@ public class User {
 
     public Date getCreateTime() {
         return createTime;
+    }
+
+    public String getUsername() {
+        return getDataAttr(KEY_USERNAME).get();
     }
 }
 

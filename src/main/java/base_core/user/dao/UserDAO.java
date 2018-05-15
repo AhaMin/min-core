@@ -12,4 +12,6 @@ public interface UserDAO {
     User getByAccount(String account);
 
     long insert(String account, String data);
+
+    int updateData(long userId, String newData, String oldData);
 }

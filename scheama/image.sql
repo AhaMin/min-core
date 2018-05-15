@@ -11,7 +11,7 @@ USE `image`;
 -- 用户
 create table image(
   id bigint unsigned not null auto_increment,
-  data json not null,
+  data VARCHAR(4096) not null,
   create_time datetime not null,
   primary key (id)
 ) Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;

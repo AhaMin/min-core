@@ -61,8 +61,8 @@ public class ResponseWrapper {
         return status == ResponseStatus.Ok;
     }
 
-    public ResponseStatus getStatus() {
-        return status;
+    public int getStatus() {
+        return status.getValue();
     }
 
     @JsonInclude(Include.NON_NULL)
