@@ -20,7 +20,7 @@ public class FileUploadHelper {
     private ImageDAO imageDAO;
 
     public Long upload(MultipartFile file) {
-        long id = imageDAO.insert(new DataAttributeBuilder().add(Image.KEY_VERSION, 1).buildString());
+        long id = imageDAO.insert(new DataAttributeBuilder().add(Image.KEY_VERSION, 0).buildString());
 
         FileOutputStream fos = null;
         boolean success = false;
