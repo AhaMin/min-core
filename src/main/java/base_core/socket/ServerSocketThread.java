@@ -29,7 +29,7 @@ public class ServerSocketThread extends Thread {
     public void run() {
         String data;
         while ((data = readFromClient()) != null) {
-            ClientMessage message = JSONCodec.decode(data, ClientMessage.class);
+            SocketMessage message = JSONCodec.decode(data, SocketMessage.class);
             long toUserId = message.getToUserId();
             Socket toSocket = socketMap.get(toUserId);
             if (toSocket != null) {

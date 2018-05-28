@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * created by ewang on 2018/4/18.
  */
-public class ClientMessage {
+public class SocketMessage {
 
     private final long userId;
 
@@ -16,19 +16,15 @@ public class ClientMessage {
 
     private final String username;
 
-    private final String toUsername;
-
     @JsonCreator
-    public ClientMessage(@JsonProperty("userId") long userId,
+    public SocketMessage(@JsonProperty("userId") long userId,
                          @JsonProperty("toUserId") long toUserId,
                          @JsonProperty("content") String content,
-                         @JsonProperty("username") String username,
-                         @JsonProperty("toUsername") String toUsername) {
+                         @JsonProperty("username") String username) {
         this.userId = userId;
         this.toUserId = toUserId;
         this.content = content;
         this.username = username;
-        this.toUsername = toUsername;
     }
 
     public long getUserId() {
@@ -45,9 +41,5 @@ public class ClientMessage {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getToUsername() {
-        return toUsername;
     }
 }
