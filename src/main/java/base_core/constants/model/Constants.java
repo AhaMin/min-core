@@ -8,7 +8,7 @@ import java.util.Map;
  * created by ewang on 2018/3/23.
  */
 public enum Constants {
-    ImagePath("/Users/ewang/Min-ImagePath/upload/"),
+    ImagePath("/Library/WebServer/Documents/min/image/"),
     DBUsername("root"),
     DBPwd("0530")
     ;

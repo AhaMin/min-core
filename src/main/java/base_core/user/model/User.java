@@ -13,6 +13,8 @@ public class User extends AbstractDataAttributeEntity {
 
     public static DataAttributeKey<String> KEY_USERNAME = new DataAttributeKey<String>(User.class,
             "username", TypeToken.of(String.class));
+    public static DataAttributeKey<Long> KEY_AVATAR = new DataAttributeKey<Long>(User.class,
+            "avatarId", TypeToken.of(Long.class));
 
     private final long id;
     private final String account;
@@ -44,6 +46,10 @@ public class User extends AbstractDataAttributeEntity {
 
     public String getUsername() {
         return getDataAttr(KEY_USERNAME).get();
+    }
+
+    public Long getAvatarId() {
+        return getDataAttr(KEY_AVATAR).get();
     }
 }
 

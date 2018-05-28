@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -23,13 +25,16 @@ public class FileUploadHelper {
         long id = imageDAO.insert(new DataAttributeBuilder().add(Image.KEY_VERSION, 0).buildString());
 
         FileOutputStream fos = null;
+        BufferedImage bufferedImage = null;
         boolean success = false;
-        String type = file.getContentType();
-        String filePath = Constants.ImagePath.getValue() + id + "." + type.split("/")[1];
+        String type = file.getContentType().split("/")[1];
+        String filePath = Constants.ImagePath.getValue() + id + "." + type;
+        File imageFile = new File(filePath);
         try {
 
+            bufferedImage = ImageIO.read(file.getInputStream());
             byte[] bytes = file.getBytes();
-            fos = new FileOutputStream(filePath);
+            fos = new FileOutputStream(imageFile);
             fos.write(bytes);
 
             success = true;
@@ -39,6 +44,7 @@ public class FileUploadHelper {
             e.printStackTrace();
         } finally {
             try {
+                imageFile.setReadable(true, false);
                 if (fos != null) fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -49,6 +55,9 @@ public class FileUploadHelper {
             int version = finalImage.getVersion();
             DataAttributeBuilder builder = new DataAttributeBuilder()
                     .add(Image.KEY_PATH, filePath)
+                    .add(Image.KEY_TYPE, type)
+                    .add(Image.KEY_HEIGHT, bufferedImage.getHeight())
+                    .add(Image.KEY_WIDTH, bufferedImage.getWidth())
                     .add(Image.KEY_VERSION, version + 1);
             imageDAO.update(id, builder.buildString(), version);
             return finalImage.getId();

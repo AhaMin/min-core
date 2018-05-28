@@ -26,16 +26,12 @@ public class SessionViewService {
     private UserViewService userViewService;
 
     @Autowired
-    private UserDAO userDAO;
-
-    @Autowired
     private MessageDAO messageDAO;
 
     public List<SessionView> buildView(Collection<Session> sessionList) {
         List<SessionView> sessionViewList = new ArrayList<>();
         for (Session s : sessionList) {
-            User toUser = userDAO.getById(s.getToUserId());
-            UserView toUserView = userViewService.buildView(Collections.singletonList(toUser)).get(0);
+            UserView toUserView = userViewService.buildViewById(Collections.singletonList(s.getToUserId())).get(0);
             Message latestMessage = messageDAO.getLatestBySession(s.getId());
             SessionView sessionView = new SessionView(toUserView, latestMessage.getContent(), s.getUpdateTime(), s.getUnread());
             sessionViewList.add(sessionView);
