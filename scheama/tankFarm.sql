@@ -539,3 +539,118 @@ UPDATE member SET level_id=(SELECT id FROM member_level WHERE name='金卡') WHE
 END if;
 END$$
 delimiter ;
+
+ -- *****************************************************************************************************
+-- 1.定义存储过程，功能是往销售表中插入一行数据，参数为：油品编号、油库编号、工作人员编号和会员编号，此记录中时间为当前时间，折扣通过会员编号从会员信息表中查询得到，单价从油品类别中得到。
+delimiter $$
+CREATE PROCEDURE insert_sale_info (IN tank_id INT,IN farm_id INT,IN operate_staff_id bigint,IN member_id bigint)
+BEGIN
+DECLARE discount DOUBLE;
+DECLARE unit_price DOUBLE;
+SET discount=(SELECT member_level.discount FROM member LEFT JOIN member_level ON member.level_id=member_level.id WHERE member.member_id=member_id);
+SET unit_price=(SELECT price FROM tank WHERE id=tank_id);
+INSERT INTO sale_info(create_time,tank_id,farm_id,sale_capacity,unit_price,operate_staff_id,member_id,discount)
+VALUES (now(),tank_id,farm_id,300,unit_price,operate_staff_id,member_id,discount);
+END$$
+delimiter ;
+
+-- 2.定义存储过程，参数为年份，统计每种油品本年的利润。
+CREATE TABLE tank_profit_year(
+  id bigint unsigned NOT NULL auto_increment,
+  tank_id INT unsigned NOT NULL,
+  profit DOUBLE unsigned NOT NULL,
+  `year` INT unsigned NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (tank_id) REFERENCES tank(id),
+  KEY idx_year(`year`)
+);
+
+delimiter $$
+CREATE PROCEDURE tank_profit (IN paramYear INT)
+BEGIN
+INSERT INTO tank_profit_year(tank_id,profit,`year`)
+SELECT total_sale.id,sale_price - supply_price,paramYear FROM
+(SELECT sa.tank_id AS id,SUM(sa.sale_capacity*sa.unit_price) AS sale_price FROM sale_info sa WHERE YEAR(sa.create_time)=paramYear GROUP BY sa.tank_id) total_sale JOIN
+(SELECT su.tank_id AS id,SUM(su.supply_capacity*su.unit_price) AS supply_price FROM supply_info su WHERE YEAR(su.create_time)=paramYear GROUP BY su.tank_id) total_supply
+ON total_sale.id=total_supply.id;
+END$$
+delimiter ;
+
+call tank_profit(2017);
+SELECT * FROM tank_profit_year WHERE `year`=2017;
+
+-- 3.在存储过程中定义游标，输出每个客户的编号，姓名，等级，消费额。
+delimiter $$
+CREATE PROCEDURE member_info()
+BEGIN
+DECLARE member_id bigint;
+DECLARE member_name VARCHAR(16);
+DECLARE level_name VARCHAR(16);
+DECLARE total_consumption DOUBLE;
+DECLARE member_cursor CURSOR FOR
+SELECT member.member_id,member.name,member_level.name,member.total_consumption FROM member
+LEFT JOIN member_level ON member.level_id=member_level.id;
+OPEN member_cursor;
+FETCH member_cursor INTO member_id,member_name,level_name,total_consumption;
+repeat
+SELECT concat('客户编号：',member_id,' 姓名:',member_name,' 等级:',level_name,' 消费额:',total_consumption);
+FETCH member_cursor INTO member_id,member_name,level_name,total_consumption;
+until 0 end repeat;
+CLOSE member_cursor;
+END$$
+delimiter ;
+
+-- 4.员工的工资与其销售额有关，请定义函数，参数为工作号，返回值为该员工本月的销售额。
+delimiter $$
+CREATE FUNCTION staff_total_sale(work_id bigint)
+returns DOUBLE
+BEGIN
+DECLARE x DOUBLE DEFAULT 0;
+SET x=(SELECT SUM(sale_capacity*unit_price) FROM sale_info WHERE MONTH(create_time)=MONTH(now())
+GROUP BY operate_staff_id HAVING operate_staff_id=work_id);
+return x;
+END$$
+delimiter ;
+
+-- 5.请定义函数，参数为会员编号，返回值为该会员本年的消费金额
+delimiter $$
+CREATE FUNCTION member_consumption(id bigint)
+returns DOUBLE
+BEGIN
+DECLARE x DOUBLE DEFAULT 0;
+SET x=(SELECT SUM(sale_capacity*unit_price*discount) FROM sale_info WHERE YEAR(create_time)=YEAR(now())
+GROUP BY member_id HAVING member_id=id);
+return x;
+END$$
+delimiter ;
+
+ -- *****************************************************************************************************
+-- 一、授权。在MYSQL中建立多个用户，给他们赋予不同的权限，然后查看是否真正拥有被授予的权限了。
+-- 在授权之后验证用户是否拥有了相应的权限。在执行完上面语句之后，我们可以分别以不同用户的身份登录数据库，进行相关操作，检查系统是否许可。
+
+-- 1.  将访问整个服务器的所有权限授予用户U1;
+GRANT ALL PRIVILEGES ON *.* TO 'U1'@'localhost' IDENTIFIED BY '0000';
+
+-- 2.  把查询油库的权限授给用户 U2。
+GRANT SELECT ON tankFarm.tank TO 'U2'@'localhost' IDENTIFIED BY '0000';
+
+-- 3.  把对进货信息表的查询、修改和删除操作权限授予用户 U3。
+GRANT SELECT,UPDATE,DELETE ON tankFarm.supply_info TO 'U3'@'localhost' IDENTIFIED BY '0000';
+
+-- 4.  把查询 会员信息表和修改会员信息表中会员等级编号的权限授给用户 U4, 并允许 U4 将此权限再授予其他用户。
+GRANT SELECT,UPDATE(level_id) ON tankFarm.member TO 'U4'@'localhost' IDENTIFIED BY '0000' WITH GRANT OPTION;
+
+-- 5.  授予用户U5 对数据库的 create view，show view 权限。然后u5登录，创建视图，要求视图显示的信息为2017年每个油品的销量。
+GRANT CREATE VIEW,SHOW VIEW ON tankFarm.* TO 'U5'@'localhost' IDENTIFIED BY '0000';
+GRANT SELECT ON tankFarm.sale_info TO 'U5'@'localhost';
+GRANT SELECT ON tankFarm.2017_tank_sale TO 'U5'@'localhost';
+
+CREATE VIEW 2017_tank_sale AS SELECT tank_id,SUM(sale_capacity) AS sales FROM sale_info GROUP BY tank_id;
+
+
+-- 二、回收权限。将授予的权限部分收回，检查回收后，该用户是否真正丧失了对数据的相应权限。
+
+-- 收回用户 U4 修改会员等级编号的权限。
+REVOKE UPDATE(level_id) ON tankFarm.member FROM 'U4'@'localhost';
+-- 在回收权限之后验证用户是否真正丧失了该权限。
+UPDATE member SET level_id=1 WHERE member_id=8;
