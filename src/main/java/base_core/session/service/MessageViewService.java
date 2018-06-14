@@ -30,8 +30,8 @@ public class MessageViewService {
         for (Message m : messageList) {
             User user = userDAO.getById(m.getUserId());
             User toUser = userDAO.getById(m.getToUserId());
-            UserView userView = userViewService.buildView(Collections.singletonList(user)).get(0);
-            UserView toUserView = userViewService.buildView(Collections.singletonList(toUser)).get(0);
+            UserView userView = userViewService.buildUserView(Collections.singletonList(user)).get(0);
+            UserView toUserView = userViewService.buildUserView(Collections.singletonList(toUser)).get(0);
             messageViewList.add(new MessageView(userView, toUserView, m.getContent(), m.getCreateTime()));
         }
         return messageViewList;

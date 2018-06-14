@@ -28,7 +28,9 @@ create table user_password(
 
 -- 用户地址address
 create table user_address(
+  id bigint unsigned not null auto_increment,
 	user_id bigint unsigned not null,
-	address varchar(4096) not null,
-	PRIMARY key (user_id)
+	data varchar(4096) not null,
+	create_time datetime not null,
+	PRIMARY key (id)
 )Engine=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4;

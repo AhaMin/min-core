@@ -54,7 +54,7 @@ public class FileUploadHelper {
             Image finalImage = imageDAO.getById(id);
             int version = finalImage.getVersion();
             DataAttributeBuilder builder = new DataAttributeBuilder()
-                    .add(Image.KEY_PATH, filePath)
+                    .add(Image.KEY_URL, filePath)
                     .add(Image.KEY_TYPE, type)
                     .add(Image.KEY_HEIGHT, bufferedImage.getHeight())
                     .add(Image.KEY_WIDTH, bufferedImage.getWidth())

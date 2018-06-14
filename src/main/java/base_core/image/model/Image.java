@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class Image extends AbstractDataAttributeEntity {
 
-    public static final DataAttributeKey<String> KEY_PATH = new DataAttributeKey<>(Image.class, "path", String.class);
+    public static final DataAttributeKey<String> KEY_URL = new DataAttributeKey<>(Image.class, "url", String.class);
 
     public static final DataAttributeKey<String> KEY_TYPE = new DataAttributeKey<>(Image.class, "type", String.class);
 
@@ -32,7 +32,7 @@ public class Image extends AbstractDataAttributeEntity {
     }
 
     public String getPath() {
-        return getDataAttr(KEY_PATH).get();
+        return getDataAttr(KEY_URL).get();
     }
 
     public String getType() {

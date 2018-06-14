@@ -13,6 +13,7 @@ public enum ResponseStatus {
     NotFound(404), //
     ServerError(500),
     RequestParamValidationFail(501),
+    ThresholdHit(503),
     UploadFail(506); //
 
     private final int value;

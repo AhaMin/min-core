@@ -11,7 +11,7 @@ public class ImageView {
     private final long id;
 
     @JsonProperty
-    private final String path;
+    private final String url;
 
     @JsonProperty
     private final String type;
@@ -22,9 +22,9 @@ public class ImageView {
     @JsonProperty
     private final int width;
 
-    public ImageView(long id, String path, String type, int height, int width) {
+    public ImageView(long id, String url, String type, int height, int width) {
         this.id = id;
-        this.path = path;
+        this.url = url;
         this.type = type;
         this.height = height;
         this.width = width;

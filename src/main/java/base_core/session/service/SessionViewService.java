@@ -4,8 +4,6 @@ import base_core.session.dao.MessageDAO;
 import base_core.session.model.Message;
 import base_core.session.model.Session;
 import base_core.session.view.SessionView;
-import base_core.user.dao.UserDAO;
-import base_core.user.model.User;
 import base_core.user.service.UserViewService;
 import base_core.user.view.UserView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ public class SessionViewService {
     public List<SessionView> buildView(Collection<Session> sessionList) {
         List<SessionView> sessionViewList = new ArrayList<>();
         for (Session s : sessionList) {
-            UserView toUserView = userViewService.buildViewById(Collections.singletonList(s.getToUserId())).get(0);
+            UserView toUserView = userViewService.buildUserViewById(Collections.singletonList(s.getToUserId())).get(0);
             Message latestMessage = messageDAO.getLatestBySession(s.getId());
             SessionView sessionView = new SessionView(toUserView, latestMessage.getContent(), s.getUpdateTime(), s.getUnread());
             sessionViewList.add(sessionView);
