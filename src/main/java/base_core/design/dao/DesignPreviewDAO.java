@@ -7,7 +7,7 @@ import base_core.design.model.DesignPreview;
  * created by ewang on 2018/6/12.
  */
 public interface DesignPreviewDAO {
-    long insert(long designId, long previewImageId, long detailImageId, DesignSide designSide);
+    long insert(long designId, DesignSide designSide, String data);
 
     DesignPreview getById(long id);
 }

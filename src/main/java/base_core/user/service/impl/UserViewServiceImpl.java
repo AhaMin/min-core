@@ -29,6 +29,7 @@ public class UserViewServiceImpl implements UserViewService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
     private UserAddressDAO userAddressDAO;
 
     public List<UserView> buildUserView(List<User> userList) {
@@ -49,6 +50,9 @@ public class UserViewServiceImpl implements UserViewService {
                 continue;
             }
             User u = userDAO.getById(id);
+            if (u == null) {
+                continue;
+            }
             List<ImageView> imageViewList = imageViewService.buildViewById(Collections.singletonList(u.getAvatarId()));
             userViewList.add(new UserView(u.getId(),
                     CollectionUtils.isEmpty(imageViewList) ? null : imageViewList.get(0),
@@ -77,6 +81,9 @@ public class UserViewServiceImpl implements UserViewService {
                 continue;
             }
             UserAddress address = userAddressDAO.getById(id);
+            if (address == null) {
+                continue;
+            }
             List<UserView> userViewList = buildUserViewById(Collections.singletonList(address.getUserId()));
             userAddressViewList.add(new UserAddressView(address.getId(),
                     CollectionUtils.isEmpty(userViewList) ? null : userViewList.get(0), address.getProvince(), address.getCity(),

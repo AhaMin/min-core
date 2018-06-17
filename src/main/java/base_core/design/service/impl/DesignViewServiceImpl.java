@@ -33,6 +33,7 @@ public class DesignViewServiceImpl implements DesignViewService {
     @Autowired
     private ImageViewService imageViewService;
 
+    @Autowired
     private DesignDAO designDAO;
 
     @Override
@@ -53,6 +54,9 @@ public class DesignViewServiceImpl implements DesignViewService {
                 continue;
             }
             Design d = designDAO.getById(designId);
+            if (d == null) {
+                continue;
+            }
             List<UserView> userViewList = userViewService.buildUserViewById(Collections.singletonList(d.getOwnerId()));
             designViewList.add(new DesignView(d.getId(), CollectionUtils.isEmpty(userViewList) ? null : userViewList.get(0)));
         }
@@ -66,7 +70,7 @@ public class DesignViewServiceImpl implements DesignViewService {
         for (DesignPreview designPreview : designPreviewList) {
 
             List<DesignView> designViewList = buildDesignViewById(Collections.singletonList(designPreview.getDesignId()));
-            List<ImageView> imageViewList = imageViewService.buildViewById(Collections.singletonList(designPreview.getPreviewImageId()));
+            List<ImageView> imageViewList = imageViewService.buildViewById(Collections.singletonList(designPreview.getImagePreview()));
 
             designPreviewViewList.add(new DesignPreviewView(designPreview.getId(),
                     CollectionUtils.isEmpty(designViewList) ? null : designViewList.get(0),
@@ -90,6 +94,6 @@ public class DesignViewServiceImpl implements DesignViewService {
                     CollectionUtils.isEmpty(userAddressViewList) ? null : userAddressViewList.get(0),
                     order.getDesignSize(), order.getPrice(), order.getOrderStatus()));
         }
-        return null;
+        return designOrderViewList;
     }
 }

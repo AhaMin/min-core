@@ -25,6 +25,9 @@ public class ImageViewService {
                 continue;
             }
             Image image = imageDAO.getById(id);
+            if (image == null) {
+                continue;
+            }
             imageViews.add(new ImageView(
                     image.getId(), image.getPath(), image.getType(), image.getHeight(), image.getWidth()
             ));
